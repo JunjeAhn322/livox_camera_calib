@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <iostream>
 #include <opencv2/core/eigen.hpp>
+#include <ceres/manifold.h>
 
 using namespace std;
 
@@ -208,7 +209,7 @@ int main(int argc, char **argv) {
   std::vector<Calibration> calibs;
   for (size_t i = 0; i < data_num; i++) {
     string image_file, pcd_file = "";
-    image_file = image_path + "/" + std::to_string(i) + ".bmp";
+    image_file = image_path + "/" + std::to_string(i) + ".png";
     pcd_file = pcd_path + "/" + std::to_string(i) + ".pcd";
     Calibration single_calib(image_file, pcd_file, calib_config_file);
     single_calib.fx_ = camera_matrix[0];
@@ -309,8 +310,8 @@ int main(int argc, char **argv) {
       Eigen::Map<Eigen::Quaterniond> m_q = Eigen::Map<Eigen::Quaterniond>(ext);
       Eigen::Map<Eigen::Vector3d> m_t = Eigen::Map<Eigen::Vector3d>(ext + 4);
 
-      ceres::LocalParameterization *q_parameterization =
-          new ceres::EigenQuaternionParameterization();
+      ceres::Manifold *q_parameterization =
+          new ceres::EigenQuaternionManifold();
       ceres::Problem problem;
 
       problem.AddParameterBlock(ext, 4, q_parameterization);

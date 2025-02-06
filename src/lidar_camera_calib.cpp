@@ -1,6 +1,7 @@
 #include "include/lidar_camera_calib.hpp"
 #include "ceres/ceres.h"
 #include "include/common.h"
+#include <ceres/manifold.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -254,7 +255,7 @@ int main(int argc, char **argv) {
   calibra.init_rgb_cloud_pub_.publish(pub_cloud);
   cv::Mat init_img = calibra.getProjectionImg(calib_params);
   cv::imshow("Initial extrinsic", init_img);
-  cv::imwrite("/home/ycj/data/calib/init.png", init_img);
+  cv::imwrite("/home/mars_ugv/data/calib/init.png", init_img);
   cv::waitKey(1000);
 
   if (use_rough_calib) {
@@ -308,8 +309,8 @@ int main(int argc, char **argv) {
       Eigen::Map<Eigen::Quaterniond> m_q = Eigen::Map<Eigen::Quaterniond>(ext);
       Eigen::Map<Eigen::Vector3d> m_t = Eigen::Map<Eigen::Vector3d>(ext + 4);
 
-      ceres::LocalParameterization *q_parameterization =
-          new ceres::EigenQuaternionParameterization();
+      ceres::Manifold *q_parameterization =
+          new ceres::EigenQuaternionManifold();
       ceres::Problem problem;
 
       problem.AddParameterBlock(ext, 4, q_parameterization);
@@ -381,7 +382,7 @@ int main(int argc, char **argv) {
   outfile << 0 << "," << 0 << "," << 0 << "," << 1 << std::endl;
   cv::Mat opt_img = calibra.getProjectionImg(calib_params);
   cv::imshow("Optimization result", opt_img);
-  cv::imwrite("/home/ycj/data/calib/opt.png", opt_img);
+  cv::imwrite("/home/mars_ugv/data/calib/opt.png", opt_img);
   cv::waitKey(1000);
   Eigen::Matrix3d init_rotation;
   init_rotation << 0, -1.0, 0, 0, 0, -1.0, 1, 0, 0;
