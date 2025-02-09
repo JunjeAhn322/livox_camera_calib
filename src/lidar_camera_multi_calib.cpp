@@ -272,9 +272,9 @@ int main(int argc, char **argv) {
   bool opt_flag = true;
 
   // Iteratively reducve the matching distance threshold
-  for (dis_threshold = 30; dis_threshold > 10; dis_threshold -= 1) {
+  for (dis_threshold = 30; dis_threshold > 5; dis_threshold -= 1) {
     // For each distance, do twice optimization
-    for (int cnt = 0; cnt < 2; cnt++) {
+    for (int cnt = 0; cnt < 4; cnt++) {
 
       std::vector<std::vector<VPnPData>> vpnp_list_vect;
       int vpnp_size = 0;
